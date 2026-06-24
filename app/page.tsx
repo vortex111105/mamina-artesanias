@@ -1,65 +1,83 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { CreditCard, ShoppingBag } from 'lucide-react'
 
-export default function Home() {
+function InstagramIcon({ className }: { className?: string }) {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || '#'
+const IG_LINK = process.env.NEXT_PUBLIC_IG_LINK || '#'
+
+export default function LandingPage() {
+  return (
+    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 bg-cream">
+      <div className="w-full max-w-sm flex flex-col items-center gap-10">
+
+        {/* Logo / Header */}
+        <div className="text-center space-y-2">
+          <div className="text-6xl mb-4">🧶</div>
+          <h1 className="font-display text-4xl font-bold text-brown tracking-wide">
+            MAMINA
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-brown-light text-sm tracking-widest uppercase font-sans">
+            Artesanías
+          </p>
+          <div className="w-16 h-0.5 bg-terracotta mx-auto mt-3" />
+          <p className="text-brown-light text-sm mt-3 font-sans">
+            Hechas con tiempo y con amor
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+
+        {/* Buttons */}
+        <div className="w-full flex flex-col gap-4">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href={MP_LINK}
             target="_blank"
             rel="noopener noreferrer"
+            className="flex items-center gap-4 w-full rounded-2xl px-6 py-5 bg-[#009EE3] text-white shadow-md active:scale-[0.98] transition-transform"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            <CreditCard className="w-6 h-6 shrink-0" />
+            <div>
+              <p className="font-semibold text-base leading-tight">Pagar con MercadoPago</p>
+              <p className="text-xs text-blue-100 mt-0.5">Transferencia directa en tienda</p>
+            </div>
           </a>
+
+          <Link
+            href="/tienda"
+            className="flex items-center gap-4 w-full rounded-2xl px-6 py-5 bg-terracotta text-white shadow-md active:scale-[0.98] transition-transform"
+          >
+            <ShoppingBag className="w-6 h-6 shrink-0" />
+            <div>
+              <p className="font-semibold text-base leading-tight">Ver Tienda</p>
+              <p className="text-xs text-orange-100 mt-0.5">Catálogo completo de productos</p>
+            </div>
+          </Link>
+
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href={IG_LINK}
             target="_blank"
             rel="noopener noreferrer"
+            className="flex items-center gap-4 w-full rounded-2xl px-6 py-5 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white shadow-md active:scale-[0.98] transition-transform"
           >
-            Documentation
+            <InstagramIcon className="w-6 h-6 shrink-0" />
+            <div>
+              <p className="font-semibold text-base leading-tight">Instagram</p>
+              <p className="text-xs text-pink-100 mt-0.5">Novedades y detrás de escena</p>
+            </div>
           </a>
         </div>
-      </main>
-    </div>
-  );
+
+        <p className="text-brown-light/60 text-xs text-center font-sans">
+          © MAMINA Artesanías · Hecho con amor 🤍
+        </p>
+      </div>
+    </main>
+  )
 }

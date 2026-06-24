@@ -1,26 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cream: #FFF8F0;
+  --terracotta: #C4714B;
+  --terracotta-dark: #A85A38;
+  --sage: #7A9E7E;
+  --sage-dark: #5E7E62;
+  --brown: #5C3D2E;
+  --brown-light: #8B6355;
+  --sand: #E8D5C4;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-cream: var(--cream);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-dark: var(--terracotta-dark);
+  --color-sage: var(--sage);
+  --color-sage-dark: var(--sage-dark);
+  --color-brown: var(--brown);
+  --color-brown-light: var(--brown-light);
+  --color-sand: var(--sand);
+  --color-background: var(--cream);
+  --color-foreground: var(--brown);
+  --font-display: var(--font-playfair);
+  --font-sans: var(--font-inter);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+}
+
+.font-display {
+  font-family: var(--font-playfair), Georgia, serif;
 }
