@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import { CartProvider } from '@/lib/cart-context'
+import { InteractiveBackground } from '@/components/InteractiveBackground'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -28,7 +29,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${playfair.variable} ${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-cream font-sans">
+      <body className="min-h-full flex flex-col bg-cream font-sans relative">
+        <InteractiveBackground />
         <CartProvider>{children}</CartProvider>
       </body>
     </html>
