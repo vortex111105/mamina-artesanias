@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Truck, CreditCard, Tag } from 'lucide-react'
 import { Product } from '@/lib/types'
 import { AddToCartButton } from '@/components/AddToCartButton'
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
 const deliveryLabels: Record<string, string> = {
   correo: 'Envío por correo',
@@ -31,23 +31,55 @@ export function ProductDetailView({ product }: { product: Product }) {
     `Hola! Vi este producto en tu tienda y me interesa encargar uno: ${product.name} — ${productUrl}`,
   )
 
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 30 })
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 30 })
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"])
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"])
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const width = rect.width
+    const height = rect.height
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    const xPct = mouseX / width - 0.5
+    const yPct = mouseY / height - 0.5
+    x.set(xPct)
+    y.set(yPct)
+  }
+
+  const handleMouseLeave = () => {
+    x.set(0)
+    y.set(0)
+  }
+
   return (
     <main className="max-w-4xl mx-auto px-4 pt-28 pb-12 flex-1">
       <div className="flex flex-col md:flex-row gap-10 md:gap-14">
-        {/* Left: Image */}
+        {/* Left: Image with 3D Effect */}
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           className="w-full md:w-1/2 shrink-0"
+          style={{ perspective: 1500 }}
         >
-          <div className="relative aspect-square rounded-[2rem] overflow-hidden bg-white/40 shadow-warm-lg border border-white/60">
+          <motion.div
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+            className="relative aspect-square rounded-[2rem] overflow-hidden bg-white/40 shadow-warm-lg border border-white/60"
+          >
             {product.image_url ? (
               <Image
                 src={product.image_url}
                 alt={product.name}
                 fill
-                className="object-cover hover:scale-105 transition-transform duration-700 ease-out"
+                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
                 priority
               />
@@ -57,8 +89,8 @@ export function ProductDetailView({ product }: { product: Product }) {
               </div>
             )}
             
-            {/* Overlay badge */}
-            <div className="absolute top-4 left-4">
+            {/* Overlay badge in 3D */}
+            <div className="absolute top-4 left-4" style={{ transform: "translateZ(50px)" }}>
               <span
                 className={`text-xs font-bold px-4 py-2 rounded-full shadow-md backdrop-blur-md ${
                   inStock ? 'bg-sage/90 text-white' : 'bg-sand/90 text-brown'
@@ -67,7 +99,7 @@ export function ProductDetailView({ product }: { product: Product }) {
                 {inStock ? `${product.stock} disponible${product.stock > 1 ? 's' : ''}` : 'A pedido'}
               </span>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
 
         {/* Right: Info */}
