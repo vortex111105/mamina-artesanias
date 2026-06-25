@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingBag, ArrowRight, CreditCard } from 'lucide-react'
+import { ShoppingBag, CreditCard } from 'lucide-react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
 const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || '#'
@@ -24,8 +24,8 @@ export default function LandingPage() {
   const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 })
   const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 })
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"])
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"])
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["8deg", "-8deg"])
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-8deg", "8deg"])
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -43,7 +43,7 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-screen bg-brown flex flex-col lg:flex-row overflow-hidden relative">
+    <main className="min-h-screen bg-brown flex flex-col lg:flex-row overflow-hidden relative items-center justify-center">
       {/* Absolute Decorative SVG */}
       <motion.svg 
         initial={{ opacity: 0 }} 
@@ -55,90 +55,92 @@ export default function LandingPage() {
         <path d="M50 0 A50 50 0 0 1 100 50 A50 50 0 0 1 50 100 A50 50 0 0 1 0 50 A50 50 0 0 1 50 0 Z" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 4"/>
       </motion.svg>
 
-      {/* Left: Content */}
-      <div className="w-full lg:w-1/2 min-h-[50vh] lg:min-h-screen flex flex-col justify-center px-8 lg:px-20 py-16 relative z-10">
+      {/* Left: Content & Buttons */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center lg:items-start px-8 lg:px-20 py-16 relative z-10 text-center lg:text-left">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-xl"
+          className="max-w-md w-full"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-terracotta/30 bg-terracotta/10 text-terracotta text-xs font-bold uppercase tracking-widest mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-terracotta/30 bg-terracotta/10 text-terracotta text-xs font-bold uppercase tracking-widest mb-6">
             <span className="w-2 h-2 rounded-full bg-terracotta animate-pulse" />
             Taller Artesanal
           </div>
 
-          <h1 className="font-display text-6xl lg:text-8xl font-bold text-cream leading-[1.1] mb-6">
-            Piezas <br />
-            <span className="text-terracotta italic">únicas</span> con <br />
-            alma de barro.
+          <h1 className="font-display text-5xl lg:text-7xl font-bold text-cream leading-[1.1] mb-6">
+            MAMINA
           </h1>
 
-          <p className="text-sand/80 text-lg lg:text-xl font-sans font-light leading-relaxed mb-10 max-w-md">
-            MAMINA es el lugar donde el tiempo se detiene. Cada pieza es elaborada a mano, horneada con paciencia y diseñada para llevar calidez a tu hogar.
+          <p className="text-sand/80 text-base lg:text-lg font-sans font-light leading-relaxed mb-10 max-w-sm mx-auto lg:mx-0">
+            Piezas únicas elaboradas a mano, con tiempo y mucho amor. Ideal para regalar o darle vida a tu hogar.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 w-full">
             <Link
               href="/tienda"
-              className="group flex items-center justify-center gap-3 rounded-full px-8 py-5 bg-terracotta text-white font-bold text-lg shadow-[0_0_40px_rgba(196,113,75,0.4)] hover:shadow-[0_0_60px_rgba(196,113,75,0.6)] hover:-translate-y-1 active:scale-95 transition-all"
+              className="flex items-center gap-4 w-full rounded-2xl px-6 py-5 bg-terracotta text-white shadow-[0_0_30px_rgba(196,113,75,0.3)] hover:shadow-[0_0_40px_rgba(196,113,75,0.5)] hover:-translate-y-0.5 active:scale-[0.98] transition-all"
             >
-              <ShoppingBag className="w-5 h-5" />
-              Explorar Tienda
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                <ShoppingBag className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-lg leading-tight">Explorar Tienda</p>
+                <p className="text-sm text-orange-100/80 mt-0.5">Ver catálogo de productos</p>
+              </div>
             </Link>
+
+            <a
+              href={MP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 w-full rounded-2xl px-6 py-5 bg-white border border-sand text-brown shadow-lg hover:shadow-xl hover:border-[#009EE3]/50 hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+            >
+              <div className="w-12 h-12 rounded-xl bg-[#009EE3]/10 flex items-center justify-center shrink-0">
+                <CreditCard className="w-6 h-6 text-[#009EE3]" />
+              </div>
+              <div className="text-left">
+                <p className="font-bold text-lg leading-tight text-brown">Transferir en Feria</p>
+                <p className="text-sm text-brown-light mt-0.5">Pagar rápido vía MercadoPago</p>
+              </div>
+            </a>
           </div>
 
           {/* Secondary Links at the bottom */}
-          <div className="mt-16 flex items-center gap-6 border-t border-white/10 pt-8">
-            <p className="text-sand/50 text-sm font-medium">Otros canales:</p>
-            <a href={IG_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sand hover:text-white transition-colors">
+          <div className="mt-12 flex items-center justify-center lg:justify-start gap-6 border-t border-white/10 pt-6">
+            <a href={IG_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sand/60 hover:text-white transition-colors">
               <InstagramIcon className="w-5 h-5" />
-              <span className="text-sm font-semibold">Instagram</span>
-            </a>
-            <a href={MP_LINK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sand hover:text-white transition-colors">
-              <CreditCard className="w-5 h-5" />
-              <span className="text-sm font-semibold">MercadoPago</span>
+              <span className="text-sm font-semibold">Seguinos en Instagram</span>
             </a>
           </div>
         </motion.div>
       </div>
 
-      {/* Right: Immersive Image */}
-      <div 
-        className="w-full lg:w-1/2 min-h-[50vh] lg:min-h-screen bg-sand relative p-4 lg:p-8"
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{ perspective: 1200 }}
-      >
+      {/* Right: Smaller Decorative Image */}
+      <div className="w-full lg:w-1/2 hidden lg:flex items-center justify-center p-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-          style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-          className="w-full h-full relative rounded-3xl overflow-hidden shadow-2xl"
+          className="relative w-full max-w-sm aspect-[3/4]"
+          style={{ perspective: 1000 }}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
         >
-          {/* We use a high quality Unsplash image for the landing hero */}
-          <Image
-            src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2070&auto=format&fit=crop"
-            alt="Artesanía en cerámica"
-            fill
-            priority
-            className="object-cover"
-          />
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-brown/80 via-transparent to-transparent pointer-events-none" />
-          
-          <div 
-            className="absolute bottom-10 left-10 right-10 text-cream"
-            style={{ transform: "translateZ(50px)" }}
+          <motion.div
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+            className="w-full h-full relative rounded-[3rem] rounded-tr-none overflow-hidden shadow-2xl border-4 border-white/10"
           >
-            <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-3xl mb-4">
-              🏺
-            </div>
-            <h2 className="font-display text-3xl font-bold">MAMINA</h2>
-            <p className="font-sans text-sm font-medium tracking-widest text-white/70 uppercase">Hecho con amor</p>
-          </div>
+            <Image
+              src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?q=80&w=2070&auto=format&fit=crop"
+              alt="Artesanía en cerámica"
+              fill
+              priority
+              className="object-cover"
+            />
+          </motion.div>
+          {/* Decorative small element behind */}
+          <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full border border-terracotta/30 -z-10" />
         </motion.div>
       </div>
     </main>

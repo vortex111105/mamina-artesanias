@@ -50,7 +50,7 @@ export function ProductCard({ product }: { product: Product }) {
         className="h-full"
       >
         <Link href={`/tienda/${product.id}`} className="group block h-full">
-          <div className="h-full rounded-[2rem] overflow-hidden bg-cream shadow-warm-md border border-terracotta/20 hover:border-terracotta/40 hover:shadow-warm-lg transition-all duration-300">
+          <div className="h-full rounded-[2rem] overflow-hidden bg-white shadow-[0_8px_30px_rgb(196,113,75,0.12)] border border-terracotta/30 hover:border-terracotta/60 hover:shadow-[0_8px_30px_rgb(196,113,75,0.2)] transition-all duration-300">
             <div className="relative aspect-[4/5] bg-sand/40 overflow-hidden rounded-t-[2rem]">
               {product.image_url ? (
                 <Image
@@ -78,7 +78,7 @@ export function ProductCard({ product }: { product: Product }) {
                 {inStock ? `${product.stock} disp.` : 'A pedido'}
               </span>
             </div>
-            <div className="p-5 flex flex-col justify-between" style={{ transform: "translateZ(20px)" }}>
+            <div className="p-5 flex flex-col justify-between bg-white" style={{ transform: "translateZ(20px)" }}>
               <div>
                 {product.category && (
                   <span className="inline-block text-[11px] uppercase tracking-widest text-terracotta mb-2 font-bold bg-terracotta/10 px-2 py-0.5 rounded-sm">
