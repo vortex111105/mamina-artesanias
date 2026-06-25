@@ -5,13 +5,13 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import Image from 'next/image'
 
 const IMAGES = [
-  { src: '/personajes/images.jpeg', size: 'w-24 h-24 md:w-32 md:h-32', top: '10%', left: '15%', z: 'z-[10]', delay: 0, speed: 1.2, parallax: -80, rotate: 10 },
-  { src: '/personajes/images (1).jpeg', size: 'w-32 h-32 md:w-48 md:h-48', top: '60%', left: '5%', z: 'z-[60]', delay: 1, speed: 0.8, parallax: 150, rotate: -15 }, // Front layer!
-  { src: '/personajes/images (2).jpeg', size: 'w-20 h-20 md:w-28 md:h-28', top: '80%', left: '40%', z: 'z-[20]', delay: 2, speed: 1.5, parallax: -50, rotate: 5 },
-  { src: '/personajes/images (3).jpeg', size: 'w-40 h-40 md:w-56 md:h-56', top: '20%', right: '-5%', z: 'z-[60]', delay: 3, speed: 0.6, parallax: 200, rotate: 20 }, // Front layer!
-  { src: '/personajes/images (4).jpeg', size: 'w-16 h-16 md:w-24 md:h-24', top: '40%', right: '25%', z: 'z-[5]', delay: 0.5, speed: 2, parallax: -30, rotate: -10 }, // Back layer
-  { src: '/personajes/images (5).jpeg', size: 'w-28 h-28 md:w-40 md:h-40', bottom: '10%', right: '15%', z: 'z-[30]', delay: 1.5, speed: 1, parallax: 90, rotate: -5 },
-  { src: '/personajes/images.png', size: 'w-24 h-24 md:w-36 md:h-36', bottom: '30%', left: '30%', z: 'z-[40]', delay: 2.5, speed: 1.1, parallax: 120, rotate: 25 },
+  { src: '/personajes/img0.jpeg', size: 'w-24 h-24 md:w-32 md:h-32', top: '10%', left: '15%', z: 'z-[10]', delay: 0, speed: 1.2, parallax: -80, rotate: 10 },
+  { src: '/personajes/img1.jpeg', size: 'w-32 h-32 md:w-48 md:h-48', top: '60%', left: '5%', z: 'z-[60]', delay: 1, speed: 0.8, parallax: 150, rotate: -15 }, // Front layer!
+  { src: '/personajes/img2.jpeg', size: 'w-20 h-20 md:w-28 md:h-28', top: '80%', left: '40%', z: 'z-[20]', delay: 2, speed: 1.5, parallax: -50, rotate: 5 },
+  { src: '/personajes/img3.jpeg', size: 'w-40 h-40 md:w-56 md:h-56', top: '20%', right: '-5%', z: 'z-[60]', delay: 3, speed: 0.6, parallax: 200, rotate: 20 }, // Front layer!
+  { src: '/personajes/img4.jpeg', size: 'w-16 h-16 md:w-24 md:h-24', top: '40%', right: '25%', z: 'z-[5]', delay: 0.5, speed: 2, parallax: -30, rotate: -10 }, // Back layer
+  { src: '/personajes/img5.jpeg', size: 'w-28 h-28 md:w-40 md:h-40', bottom: '10%', right: '15%', z: 'z-[30]', delay: 1.5, speed: 1, parallax: 90, rotate: -5 },
+  { src: '/personajes/img6.png', size: 'w-24 h-24 md:w-36 md:h-36', bottom: '30%', left: '30%', z: 'z-[40]', delay: 2.5, speed: 1.1, parallax: 120, rotate: 25 },
 ]
 
 export function MagicFloatingElements() {
