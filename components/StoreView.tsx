@@ -77,7 +77,7 @@ export function StoreView({
                   type="search"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder="¿Qué estás buscando hoy?"
+                  placeholder="¿Buscás a Snoopy, Mafalda o algo especial?"
                   className="w-full pl-16 pr-6 py-5 rounded-full border-none bg-white/95 backdrop-blur-md text-lg font-medium text-brown placeholder-brown-light/60 focus:outline-none focus:ring-4 focus:ring-terracotta/30 shadow-xl transition-all"
                 />
               </div>
@@ -143,7 +143,7 @@ export function StoreView({
               exit={{ opacity: 0, scale: 0.95 }}
               className="text-center py-24 text-brown-light bg-white/60 backdrop-blur-md rounded-3xl border border-white shadow-warm-lg max-w-2xl mx-auto"
             >
-              <p className="text-6xl mb-6 opacity-60">🏺</p>
+              <p className="text-6xl mb-6 opacity-60">✨🐶✨</p>
               <p className="font-display text-2xl font-bold text-brown mb-3">
                 {initialQ ? `Sin resultados para "${initialQ}"` : initialCategoria ? `No hay productos en "${initialCategoria}"` : 'Pronto habrá novedades'}
               </p>

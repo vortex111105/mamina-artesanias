@@ -73,7 +73,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-sand/80 text-base lg:text-lg font-sans font-light leading-relaxed mb-10 max-w-sm mx-auto lg:mx-0">
-            Piezas únicas elaboradas a mano, con tiempo y mucho amor. Ideal para regalar o darle vida a tu hogar.
+            Llevamos a tus personajes favoritos (Snoopy, El Principito, Mafalda y más) a tu mesa en piezas de cerámica únicas y elaboradas a mano con mucho amor.
           </p>
 
           <div className="flex flex-col gap-4 w-full">
