@@ -50,8 +50,8 @@ export function ProductCard({ product }: { product: Product }) {
         className="h-full"
       >
         <Link href={`/tienda/${product.id}`} className="group block h-full">
-          <div className="h-full rounded-2xl overflow-hidden bg-white shadow-warm-sm border border-sand hover:shadow-warm-lg transition-shadow duration-300">
-            <div className="relative aspect-square bg-sand/40 overflow-hidden">
+          <div className="h-full rounded-[2rem] overflow-hidden bg-cream shadow-warm-md border border-terracotta/20 hover:border-terracotta/40 hover:shadow-warm-lg transition-all duration-300">
+            <div className="relative aspect-[4/5] bg-sand/40 overflow-hidden rounded-t-[2rem]">
               {product.image_url ? (
                 <Image
                   src={product.image_url}
@@ -61,35 +61,35 @@ export function ProductCard({ product }: { product: Product }) {
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-4xl text-brown-light/40 group-hover:scale-110 transition-transform duration-700 ease-out">
+                <div className="w-full h-full flex items-center justify-center text-5xl text-brown-light/40 group-hover:scale-110 transition-transform duration-700 ease-out">
                   🧶
                 </div>
               )}
               
               {/* Overlay gradient for warmth */}
-              <div className="absolute inset-0 bg-terracotta/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-terracotta/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
               <span
-                className={`absolute top-2 right-2 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm z-10 ${
-                  inStock ? 'bg-sage text-white' : 'bg-sand text-brown-light'
+                className={`absolute top-3 right-3 text-xs font-bold px-3 py-1.5 rounded-full shadow-md z-10 ${
+                  inStock ? 'bg-sage text-white' : 'bg-sand text-brown'
                 }`}
                 style={{ transform: "translateZ(30px)" }}
               >
                 {inStock ? `${product.stock} disp.` : 'A pedido'}
               </span>
             </div>
-            <div className="p-4 flex flex-col justify-between" style={{ transform: "translateZ(20px)" }}>
+            <div className="p-5 flex flex-col justify-between" style={{ transform: "translateZ(20px)" }}>
               <div>
                 {product.category && (
-                  <span className="inline-block text-xs uppercase tracking-wider text-terracotta/70 mb-1.5 font-semibold">
+                  <span className="inline-block text-[11px] uppercase tracking-widest text-terracotta mb-2 font-bold bg-terracotta/10 px-2 py-0.5 rounded-sm">
                     {product.category}
                   </span>
                 )}
-                <h3 className="font-display font-semibold text-brown text-base leading-tight line-clamp-2">
+                <h3 className="font-display font-bold text-brown text-lg leading-tight line-clamp-2">
                   {product.name}
                 </h3>
               </div>
-              <p className="text-terracotta font-bold text-lg mt-3">
+              <p className="text-terracotta font-extrabold text-xl mt-3">
                 ${product.price.toLocaleString('es-AR')}
               </p>
             </div>

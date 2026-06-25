@@ -49,18 +49,18 @@ export function StoreView({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         onSubmit={handleSearch} 
-        className="mb-6"
+        className="mb-8"
       >
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-terracotta/30 to-sage/30 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+        <div className="relative group max-w-xl mx-auto">
+          <div className="absolute -inset-1 bg-gradient-to-r from-terracotta to-sage rounded-full blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brown-light/50" />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-terracotta" />
             <input
               type="search"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="¿Qué estás buscando?"
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-none bg-white/80 backdrop-blur-sm text-sm text-brown placeholder-brown-light/50 focus:outline-none focus:ring-2 focus:ring-terracotta/50 shadow-sm transition-all"
+              placeholder="¿Qué estás buscando hoy?"
+              className="w-full pl-14 pr-6 py-4 rounded-full border-2 border-white bg-cream/90 backdrop-blur-md text-base font-medium text-brown placeholder-brown-light/60 focus:outline-none focus:border-terracotta shadow-warm-md transition-all"
             />
           </div>
         </div>
@@ -72,16 +72,16 @@ export function StoreView({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex gap-2 flex-wrap mb-8 justify-center"
+          className="flex gap-3 flex-wrap mb-10 justify-center"
         >
           <Link
             href={initialQ ? `/tienda?q=${encodeURIComponent(initialQ)}` : '/tienda'}
-            className="relative px-5 py-2 rounded-full text-sm font-medium transition-colors"
+            className="relative px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm"
           >
             {!initialCategoria && (
-              <motion.div layoutId="activeCategory" className="absolute inset-0 bg-terracotta rounded-full shadow-sm" />
+              <motion.div layoutId="activeCategory" className="absolute inset-0 bg-terracotta rounded-full shadow-md" />
             )}
-            <span className={`relative z-10 ${!initialCategoria ? 'text-white' : 'text-brown-light hover:text-brown'}`}>
+            <span className={`relative z-10 ${!initialCategoria ? 'text-white' : 'text-brown hover:text-terracotta bg-white/60 backdrop-blur-sm rounded-full'}`}>
               Todos
             </span>
           </Link>
@@ -90,12 +90,12 @@ export function StoreView({
             <Link
               key={cat}
               href={`/tienda?categoria=${encodeURIComponent(cat)}${initialQ ? `&q=${encodeURIComponent(initialQ)}` : ''}`}
-              className="relative px-5 py-2 rounded-full text-sm font-medium transition-colors"
+              className="relative px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-sm"
             >
               {initialCategoria === cat && (
-                <motion.div layoutId="activeCategory" className="absolute inset-0 bg-terracotta rounded-full shadow-sm" />
+                <motion.div layoutId="activeCategory" className="absolute inset-0 bg-terracotta rounded-full shadow-md" />
               )}
-              <span className={`relative z-10 ${initialCategoria === cat ? 'text-white' : 'text-brown-light hover:text-brown'}`}>
+              <span className={`relative z-10 ${initialCategoria === cat ? 'text-white' : 'text-brown hover:text-terracotta bg-white/60 backdrop-blur-sm rounded-full'}`}>
                 {cat}
               </span>
             </Link>
