@@ -1,12 +1,23 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { MessageCircle, Truck, CreditCard } from 'lucide-react'
+import { Truck, CreditCard, Tag } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/lib/types'
 import { Navbar } from '@/components/Navbar'
 import { AddToCartButton } from '@/components/AddToCartButton'
 
 export const revalidate = 60
+
+function InstagramIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
 
 async function getProduct(id: string): Promise<Product | null> {
   const { data } = await supabase
@@ -33,9 +44,11 @@ export default async function ProductDetailPage({
   if (!product) notFound()
 
   const inStock = product.stock > 0
-  const BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'mamina_artesanias_bot'
-  const encargaMsg = encodeURIComponent(
-    `Hola! Me interesa encargar: ${product.name} (ID: ${product.id}). ¿Cómo lo pedimos?`,
+  const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+  const IG_USERNAME = process.env.NEXT_PUBLIC_IG_USERNAME || 'mamina_artesanias'
+  const productUrl = `${APP_URL}/tienda/${product.id}`
+  const igMsg = encodeURIComponent(
+    `Hola! Vi este producto en tu tienda y me interesa encargar uno: ${product.name} — ${productUrl}`,
   )
 
   return (
@@ -64,13 +77,24 @@ export default async function ProductDetailPage({
           {/* Info */}
           <div className="flex-1 space-y-4">
             <div>
-              <span
-                className={`inline-block text-xs font-semibold px-2.5 py-1 rounded-full mb-2 ${
-                  inStock ? 'bg-sage text-white' : 'bg-sand text-brown-light'
-                }`}
-              >
-                {inStock ? `${product.stock} disponible${product.stock > 1 ? 's' : ''}` : 'A pedido'}
-              </span>
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span
+                  className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                    inStock ? 'bg-sage text-white' : 'bg-sand text-brown-light'
+                  }`}
+                >
+                  {inStock ? `${product.stock} disponible${product.stock > 1 ? 's' : ''}` : 'A pedido'}
+                </span>
+                {product.category && (
+                  <Link
+                    href={`/tienda?categoria=${encodeURIComponent(product.category)}`}
+                    className="flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full bg-cream border border-sand text-brown-light hover:border-terracotta hover:text-terracotta transition-colors"
+                  >
+                    <Tag className="w-3 h-3" />
+                    {product.category}
+                  </Link>
+                )}
+              </div>
               <h1 className="font-display text-2xl font-bold text-brown">{product.name}</h1>
               <p className="text-3xl font-bold text-terracotta mt-1">
                 ${product.price.toLocaleString('es-AR')}
@@ -102,13 +126,13 @@ export default async function ProductDetailPage({
               <AddToCartButton product={product} />
             ) : (
               <a
-                href={`https://t.me/${BOT_USERNAME}?text=${encargaMsg}`}
+                href={`https://ig.me/m/${IG_USERNAME}?text=${igMsg}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 rounded-2xl px-6 py-4 bg-sage text-white font-semibold active:scale-[0.98] transition-transform"
+                className="w-full flex items-center justify-center gap-2 rounded-2xl px-6 py-4 bg-gradient-to-r from-[#833ab4] via-[#fd1d1d] to-[#fcb045] text-white font-semibold active:scale-[0.98] transition-transform"
               >
-                <MessageCircle className="w-5 h-5" />
-                Encargar este producto
+                <InstagramIcon className="w-5 h-5" />
+                Encargar por Instagram
               </a>
             )}
           </div>

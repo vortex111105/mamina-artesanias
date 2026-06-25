@@ -6,6 +6,17 @@ import { getAdminClient } from '@/lib/supabase'
 const ALLOWED_USER_ID = Number(process.env.TELEGRAM_ALLOWED_USER_ID)
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
+const CATEGORIES = [
+  'Tejidos',
+  'Macramé',
+  'Cerámica',
+  'Joyería',
+  'Decoración',
+  'Textiles',
+  'Accesorios',
+  'Otro',
+]
+
 interface TgMessage {
   message_id: number
   from: { id: number; first_name: string }
@@ -62,7 +73,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true })
   }
 
-  const session = getSession(chatId)
+  const session = await getSession(chatId)
 
   // --- Commands ---
   if (text.startsWith('/')) {
@@ -73,12 +84,12 @@ export async function POST(req: Request) {
         chatId,
         `¡Hola! Soy el bot de MAMINA Artesanías 🧶\n\nEnviame una <b>foto</b> para agregar un nuevo producto.\n\nComandos disponibles:\n/mis_productos — Ver los últimos productos\n/ocultar [id] — Ocultar un producto\n/editar_precio [id] [precio] — Cambiar el precio\n/editar_stock [id] [cantidad] — Actualizar el stock\n/cancelar — Cancelar lo que estés haciendo`,
       )
-      clearSession(chatId)
+      await clearSession(chatId)
       return NextResponse.json({ ok: true })
     }
 
     if (cmd === '/cancelar') {
-      clearSession(chatId)
+      await clearSession(chatId)
       await sendTelegramMessage(chatId, '✅ Listo, cancelado. Podés empezar de nuevo.')
       return NextResponse.json({ ok: true })
     }
@@ -87,7 +98,7 @@ export async function POST(req: Request) {
       const db = getAdminClient()
       const { data } = await db
         .from('products')
-        .select('id, name, price, stock, visible')
+        .select('id, name, price, stock, category, visible')
         .order('created_at', { ascending: false })
         .limit(10)
 
@@ -97,7 +108,7 @@ export async function POST(req: Request) {
         const list = data
           .map(
             (p) =>
-              `• <b>${p.name}</b> — $${p.price.toLocaleString('es-AR')} — Stock: ${p.stock} — ${p.visible ? '✅' : '🚫'} — ID: ${p.id}`,
+              `• <b>${p.name}</b>${p.category ? ` [${p.category}]` : ''} — $${p.price.toLocaleString('es-AR')} — Stock: ${p.stock} — ${p.visible ? '✅' : '🚫'} — ID: ${p.id}`,
           )
           .join('\n')
         await sendTelegramMessage(chatId, `Últimos productos:\n\n${list}`)
@@ -158,7 +169,7 @@ export async function POST(req: Request) {
   // --- Photo received: start product upload flow ---
   if (message.photo && message.photo.length > 0) {
     const largest = message.photo[message.photo.length - 1]
-    setSession(chatId, { step: 'awaiting_price', photo_file_id: largest.file_id })
+    await setSession(chatId, { step: 'awaiting_price', photo_file_id: largest.file_id })
     await sendTelegramMessage(
       chatId,
       '¡Qué hermoso! 😍\n\n¿Cuál es el precio de este producto?\n(Solo el número, ej: <code>2500</code>)',
@@ -173,7 +184,7 @@ export async function POST(req: Request) {
       await sendTelegramMessage(chatId, '❌ Ingresá un precio válido. Ej: <code>1500</code>')
       return NextResponse.json({ ok: true })
     }
-    setSession(chatId, { ...session, step: 'awaiting_name', price })
+    await setSession(chatId, { ...session, step: 'awaiting_name', price })
     await sendTelegramMessage(chatId, '¿Cómo se llama este producto?')
     return NextResponse.json({ ok: true })
   }
@@ -183,7 +194,7 @@ export async function POST(req: Request) {
       await sendTelegramMessage(chatId, '❌ El nombre es muy corto, escribí algo más descriptivo.')
       return NextResponse.json({ ok: true })
     }
-    setSession(chatId, { ...session, step: 'awaiting_description', name: text })
+    await setSession(chatId, { ...session, step: 'awaiting_description', name: text })
     await sendTelegramMessage(
       chatId,
       'Genial 👍 ¿Querés agregar una descripción breve?\n(Materiales, tamaño, colores, etc. O enviá <code>-</code> para saltearlo)',
@@ -192,11 +203,28 @@ export async function POST(req: Request) {
   }
 
   if (session.step === 'awaiting_description') {
-    const description = text === '-' ? null : text
-    setSession(chatId, { ...session, step: 'awaiting_stock', description: description ?? undefined })
+    const description = text === '-' ? undefined : text
+    await setSession(chatId, { ...session, step: 'awaiting_category', description })
+
+    const catList = CATEGORIES.map((c, i) => `<b>${i + 1}</b> — ${c}`).join('\n')
     await sendTelegramMessage(
       chatId,
-      '¿Cuántas unidades tenés disponibles?\n(Enviá <code>0</code> si es "a pedido")',
+      `¿A qué categoría pertenece este producto?\n\n${catList}\n\nRespondé con el número.`,
+    )
+    return NextResponse.json({ ok: true })
+  }
+
+  if (session.step === 'awaiting_category') {
+    const idx = parseInt(text) - 1
+    if (isNaN(idx) || idx < 0 || idx >= CATEGORIES.length) {
+      await sendTelegramMessage(chatId, `❌ Respondé con un número del 1 al ${CATEGORIES.length}.`)
+      return NextResponse.json({ ok: true })
+    }
+    const category = CATEGORIES[idx]
+    await setSession(chatId, { ...session, step: 'awaiting_stock', category })
+    await sendTelegramMessage(
+      chatId,
+      `Categoría: <b>${category}</b> ✅\n\n¿Cuántas unidades tenés disponibles?\n(Enviá <code>0</code> si es "a pedido")`,
     )
     return NextResponse.json({ ok: true })
   }
@@ -207,7 +235,7 @@ export async function POST(req: Request) {
       await sendTelegramMessage(chatId, '❌ Ingresá un número válido (0 o más).')
       return NextResponse.json({ ok: true })
     }
-    setSession(chatId, { ...session, step: 'awaiting_delivery', stock })
+    await setSession(chatId, { ...session, step: 'awaiting_delivery', stock })
     await sendTelegramMessage(
       chatId,
       'Métodos de entrega disponibles:\n\n<b>1</b> — Envío por correo\n<b>2</b> — Retiro en tienda\n<b>3</b> — Ambos\n\nRespondé con el número.',
@@ -226,7 +254,7 @@ export async function POST(req: Request) {
       await sendTelegramMessage(chatId, '❌ Respondé con 1, 2 o 3.')
       return NextResponse.json({ ok: true })
     }
-    setSession(chatId, { ...session, step: 'awaiting_payment', delivery })
+    await setSession(chatId, { ...session, step: 'awaiting_payment', delivery })
     await sendTelegramMessage(
       chatId,
       '¿Aceptás MercadoPago para este producto?\n\nRespondé <b>sí</b> o <b>no</b>.',
@@ -236,23 +264,21 @@ export async function POST(req: Request) {
 
   if (session.step === 'awaiting_payment') {
     const acceptsMP = ['sí', 'si', 's', 'yes', 'y'].includes(text.toLowerCase())
-    setSession(chatId, { ...session, step: 'confirming' })
+    await setSession(chatId, { ...session, step: 'confirming', accepts_mp: acceptsMP })
 
     const deliveryLabels: Record<string, string> = { correo: 'Envío por correo', retiro: 'Retiro en tienda' }
     const deliveryStr = (session.delivery ?? []).map((d) => deliveryLabels[d] ?? d).join(', ')
 
     await sendTelegramMessage(
       chatId,
-      `Revisá los datos antes de publicar:\n\n🏷️ <b>Nombre:</b> ${session.name}\n💰 <b>Precio:</b> $${session.price?.toLocaleString('es-AR')}\n📝 <b>Descripción:</b> ${session.description ?? '—'}\n📦 <b>Stock:</b> ${session.stock === 0 ? 'A pedido' : session.stock}\n🚚 <b>Entrega:</b> ${deliveryStr}\n💳 <b>MercadoPago:</b> ${acceptsMP ? 'Sí' : 'No'}\n\nRespondé <b>publicar</b> para confirmar o <b>cancelar</b> para descartar.`,
+      `Revisá los datos antes de publicar:\n\n🏷️ <b>Nombre:</b> ${session.name}\n🗂️ <b>Categoría:</b> ${session.category ?? '—'}\n💰 <b>Precio:</b> $${session.price?.toLocaleString('es-AR')}\n📝 <b>Descripción:</b> ${session.description ?? '—'}\n📦 <b>Stock:</b> ${session.stock === 0 ? 'A pedido' : session.stock}\n🚚 <b>Entrega:</b> ${deliveryStr}\n💳 <b>MercadoPago:</b> ${acceptsMP ? 'Sí' : 'No'}\n\nRespondé <b>publicar</b> para confirmar o <b>cancelar</b> para descartar.`,
     )
-
-    setSession(chatId, { ...session, step: 'confirming', delivery: session.delivery })
     return NextResponse.json({ ok: true })
   }
 
   if (session.step === 'confirming') {
     if (['cancelar', 'no', 'n'].includes(text.toLowerCase())) {
-      clearSession(chatId)
+      await clearSession(chatId)
       await sendTelegramMessage(chatId, '❌ Producto descartado. Podés empezar de nuevo enviando otra foto.')
       return NextResponse.json({ ok: true })
     }
@@ -266,7 +292,6 @@ export async function POST(req: Request) {
           imageUrl = await uploadImageFromTelegram(session.photo_file_id)
         }
 
-        const acceptsMP = true
         const db = getAdminClient()
         const { data: product, error } = await db
           .from('products')
@@ -276,8 +301,9 @@ export async function POST(req: Request) {
             price: session.price,
             stock: session.stock ?? 0,
             image_url: imageUrl,
+            category: session.category ?? null,
             delivery: session.delivery ?? ['retiro'],
-            accepts_mp: acceptsMP,
+            accepts_mp: session.accepts_mp ?? true,
             visible: true,
           })
           .select()
@@ -288,19 +314,19 @@ export async function POST(req: Request) {
           return NextResponse.json({ ok: true })
         }
 
-        clearSession(chatId)
+        await clearSession(chatId)
         const productUrl = `${APP_URL}/tienda/${product.id}`
 
         if (imageUrl) {
           await sendTelegramPhoto(
             chatId,
             imageUrl,
-            `✅ ¡Producto publicado!\n\n🔗 ${productUrl}`,
+            `✅ ¡Producto publicado en ${session.category ?? 'Sin categoría'}!\n\n🔗 ${productUrl}`,
           )
         } else {
           await sendTelegramMessage(
             chatId,
-            `✅ ¡Producto publicado!\n\n🔗 ${productUrl}`,
+            `✅ ¡Producto publicado en ${session.category ?? 'Sin categoría'}!\n\n🔗 ${productUrl}`,
           )
         }
       } catch (e) {

@@ -26,15 +26,16 @@ export function ProductCard({ product }: { product: Product }) {
           )}
           <span
             className={`absolute top-2 right-2 text-xs font-semibold px-2.5 py-1 rounded-full ${
-              inStock
-                ? 'bg-sage text-white'
-                : 'bg-sand text-brown-light'
+              inStock ? 'bg-sage text-white' : 'bg-sand text-brown-light'
             }`}
           >
             {inStock ? `${product.stock} disp.` : 'A pedido'}
           </span>
         </div>
         <div className="p-3">
+          {product.category && (
+            <span className="inline-block text-xs text-brown-light/70 mb-1">{product.category}</span>
+          )}
           <h3 className="font-display font-semibold text-brown text-sm leading-tight line-clamp-2">
             {product.name}
           </h3>
