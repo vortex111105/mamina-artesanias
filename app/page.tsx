@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { ShoppingBag, CreditCard } from 'lucide-react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
-const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || '#'
+const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || 'https://link.mercadopago.com.ar/mamiina'
 const IG_LINK = process.env.NEXT_PUBLIC_IG_LINK || '#'
 
 function InstagramIcon({ className }: { className?: string }) {
