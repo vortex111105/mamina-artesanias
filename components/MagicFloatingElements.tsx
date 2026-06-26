@@ -103,6 +103,7 @@ export function MagicFloatingElements() {
                   fill 
                   className="object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-300 mix-blend-luminosity hover:mix-blend-normal"
                   sizes="(max-width: 768px) 150px, 300px"
+                  unoptimized
                 />
                 
                 {/* Glass reflection overlay */}
