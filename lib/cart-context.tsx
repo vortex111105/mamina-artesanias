@@ -1,7 +1,9 @@
 'use client'
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
 import { CartItem, Product } from './types'
+
+const STORAGE_KEY = 'mamina_cart'
 
 interface CartContextValue {
   items: CartItem[]
@@ -17,15 +19,29 @@ const CartContext = createContext<CartContextValue | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored) setItems(JSON.parse(stored))
+    } catch { /* noop */ }
+    setHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    if (!hydrated) return
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+    } catch { /* noop */ }
+  }, [items, hydrated])
 
   const addItem = useCallback((product: Product, delivery_method: string) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.product.id === product.id)
       if (existing) {
         return prev.map((i) =>
-          i.product.id === product.id
-            ? { ...i, quantity: i.quantity + 1 }
-            : i,
+          i.product.id === product.id ? { ...i, quantity: i.quantity + 1 } : i,
         )
       }
       return [...prev, { product, quantity: 1, delivery_method }]
@@ -41,25 +57,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setItems((prev) => prev.filter((i) => i.product.id !== productId))
     } else {
       setItems((prev) =>
-        prev.map((i) =>
-          i.product.id === productId ? { ...i, quantity } : i,
-        ),
+        prev.map((i) => (i.product.id === productId ? { ...i, quantity } : i)),
       )
     }
   }, [])
 
   const clearCart = useCallback(() => setItems([]), [])
 
-  const total = items.reduce(
-    (sum, i) => sum + i.product.price * i.quantity,
-    0,
-  )
+  const total = items.reduce((sum, i) => sum + i.product.price * i.quantity, 0)
   const count = items.reduce((sum, i) => sum + i.quantity, 0)
 
   return (
-    <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, total, count }}
-    >
+    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, total, count }}>
       {children}
     </CartContext.Provider>
   )

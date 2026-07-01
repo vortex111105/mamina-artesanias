@@ -22,19 +22,19 @@ export function AddToCartButton({ product }: { product: Product }) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {product.delivery.length > 1 && (
-        <div>
-          <p className="text-sm font-medium text-brown mb-2">Método de entrega</p>
+        <div className="bg-white/40 p-4 rounded-2xl border border-white/50">
+          <p className="text-sm font-semibold text-brown mb-3">¿Cómo lo preferís?</p>
           <div className="flex gap-2 flex-wrap">
             {product.delivery.map((d) => (
               <button
                 key={d}
                 onClick={() => setSelectedDelivery(d)}
-                className={`px-3 py-2 rounded-xl text-sm border transition-colors ${
+                className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium border transition-all ${
                   selectedDelivery === d
-                    ? 'bg-terracotta text-white border-terracotta'
-                    : 'border-sand text-brown hover:border-terracotta'
+                    ? 'bg-terracotta text-white border-terracotta shadow-md'
+                    : 'bg-white border-sand text-brown hover:border-terracotta/50 hover:bg-terracotta/5'
                 }`}
               >
                 {deliveryLabels[d] ?? d}
@@ -45,17 +45,17 @@ export function AddToCartButton({ product }: { product: Product }) {
       )}
       <button
         onClick={handleAdd}
-        className={`w-full flex items-center justify-center gap-2 rounded-2xl px-6 py-4 font-semibold text-white transition-all ${
-          added ? 'bg-sage' : 'bg-terracotta hover:bg-terracotta-dark active:scale-[0.98]'
+        className={`w-full flex items-center justify-center gap-3 rounded-2xl px-6 py-5 font-bold text-lg text-white shadow-warm-md hover:shadow-warm-lg hover:-translate-y-0.5 transition-all ${
+          added ? 'bg-sage scale-[0.98]' : 'bg-terracotta hover:bg-terracotta-dark active:scale-[0.98]'
         }`}
       >
         {added ? (
           <>
-            <Check className="w-5 h-5" /> ¡Agregado al carrito!
+            <Check className="w-6 h-6" /> ¡Agregado al carrito!
           </>
         ) : (
           <>
-            <ShoppingCart className="w-5 h-5" /> Agregar al carrito
+            <ShoppingCart className="w-6 h-6" /> Agregar al carrito
           </>
         )}
       </button>
