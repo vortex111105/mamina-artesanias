@@ -12,7 +12,7 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || '#'
-const IG_LINK = process.env.NEXT_PUBLIC_IG_LINK || '#'
+const IG_LINK = process.env.NEXT_PUBLIC_IG_LINK || 'https://instagram.com/mamina.artesanias'
 
 export default function LandingPage() {
   return (
