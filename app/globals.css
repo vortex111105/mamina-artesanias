@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --cream: #FFF8F0;
-  --terracotta: #C4714B;
-  --terracotta-dark: #A85A38;
-  --sage: #7A9E7E;
-  --sage-dark: #5E7E62;
-  --brown: #5C3D2E;
-  --brown-light: #8B6355;
-  --sand: #E8D5C4;
+  --cream: #FEFAF7;
+  --terracotta: #C8A09A;
+  --terracotta-dark: #AD8880;
+  --sage: #9DB8AB;
+  --sage-dark: #7A9E8E;
+  --brown: #4D3F4D;
+  --brown-dark: #3D3040;
+  --brown-light: #8A7A84;
+  --sand: #EDE4DA;
 }
 
 @theme inline {
@@ -18,6 +19,7 @@
   --color-sage: var(--sage);
   --color-sage-dark: var(--sage-dark);
   --color-brown: var(--brown);
+  --color-brown-dark: var(--brown-dark);
   --color-brown-light: var(--brown-light);
   --color-sand: var(--sand);
   --color-background: var(--cream);
@@ -25,18 +27,17 @@
   --font-display: var(--font-playfair);
   --font-sans: var(--font-inter);
   
-  /* Custom warm shadows - increased opacity for vibrancy */
-  --shadow-warm-sm: 0 1px 2px 0 rgba(196, 113, 75, 0.2);
-  --shadow-warm-md: 0 4px 6px -1px rgba(196, 113, 75, 0.25), 0 2px 4px -2px rgba(196, 113, 75, 0.15);
-  --shadow-warm-lg: 0 20px 25px -5px rgba(196, 113, 75, 0.25), 0 8px 10px -6px rgba(196, 113, 75, 0.15);
+  --shadow-warm-sm: 0 1px 2px 0 rgba(200, 160, 154, 0.18);
+  --shadow-warm-md: 0 4px 6px -1px rgba(200, 160, 154, 0.20), 0 2px 4px -2px rgba(200, 160, 154, 0.12);
+  --shadow-warm-lg: 0 20px 25px -5px rgba(200, 160, 154, 0.20), 0 8px 10px -6px rgba(200, 160, 154, 0.12);
 }
 
 body {
   background-color: var(--cream);
-  background-image: 
+  background-image:
     radial-gradient(var(--sand) 1px, transparent 1px),
-    radial-gradient(circle at 15% 50%, rgba(196, 113, 75, 0.1), transparent 35%),
-    radial-gradient(circle at 85% 30%, rgba(122, 158, 126, 0.1), transparent 35%);
+    radial-gradient(circle at 15% 50%, rgba(200, 160, 154, 0.07), transparent 35%),
+    radial-gradient(circle at 85% 30%, rgba(157, 184, 171, 0.07), transparent 35%);
   background-size: 20px 20px, 100% 100%, 100% 100%;
   color: var(--brown);
 }
@@ -44,4 +45,51 @@ body {
 
 .font-display {
   font-family: var(--font-playfair), Georgia, serif;
+}
+
+/* Background blobs — CSS puro, corre en el compositor (GPU), cero JS */
+@keyframes blob-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(40px, -30px) scale(1.08); }
+  66%       { transform: translate(-20px, 20px) scale(0.96); }
+}
+@keyframes blob-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%       { transform: translate(-50px, 30px) scale(1.12); }
+  70%       { transform: translate(30px, -20px) scale(0.94); }
+}
+@keyframes blob-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(25px, 35px) scale(1.06); }
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+}
+.blob-1 {
+  width: min(45vw, 520px);
+  height: min(45vw, 520px);
+  top: -10%;
+  right: -8%;
+  background: rgba(200, 160, 154, 0.14);
+  animation: blob-drift-1 18s ease-in-out infinite;
+}
+.blob-2 {
+  width: min(55vw, 620px);
+  height: min(55vw, 620px);
+  bottom: -15%;
+  left: -12%;
+  background: rgba(157, 184, 171, 0.14);
+  animation: blob-drift-2 22s ease-in-out infinite;
+}
+.blob-3 {
+  width: min(38vw, 420px);
+  height: min(38vw, 420px);
+  top: 30%;
+  left: 35%;
+  background: rgba(237, 228, 218, 0.28);
+  animation: blob-drift-3 26s ease-in-out infinite;
 }
