@@ -34,15 +34,13 @@ export function StoreView({
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.04 }
     }
   }
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' as const } }
   }
 
   return (
@@ -77,7 +75,7 @@ export function StoreView({
                   type="search"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
-                  placeholder="¿Buscás a Snoopy, Mafalda o algo especial?"
+                  placeholder="¿Qué estás buscando?"
                   className="w-full pl-16 pr-6 py-5 rounded-full border-none bg-white/95 backdrop-blur-md text-lg font-medium text-brown placeholder-brown-light/60 focus:outline-none focus:ring-4 focus:ring-terracotta/30 shadow-xl transition-all"
                 />
               </div>
