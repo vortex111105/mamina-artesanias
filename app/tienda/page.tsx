@@ -1,6 +1,7 @@
-import { Product } from '@/lib/types'
-import { Navbar } from '@/components/Navbar'
 import { StoreView } from '@/components/StoreView'
+import { InteractiveBackground } from '@/components/InteractiveBackground'
+import { Navbar } from '@/components/Navbar'
+import { Product } from '@/lib/types'
 
 export const revalidate = 60
 
@@ -12,17 +13,12 @@ async function getProducts(category?: string, q?: string): Promise<Product[]> {
       .select('*')
       .eq('visible', true)
       .order('created_at', { ascending: false })
-
     if (category) query = query.eq('category', category)
     if (q) query = query.ilike('name', `%${q}%`)
-
     const { data, error } = await query
-    if (error) { console.error('Error loading products:', error); return [] }
+    if (error) { console.error('Supabase error:', error); return [] }
     return data ?? []
-  } catch (e) {
-    console.error('Supabase not configured:', e)
-    return []
-  }
+  } catch { return [] }
 }
 
 async function getCategories(): Promise<string[]> {
@@ -35,9 +31,7 @@ async function getCategories(): Promise<string[]> {
       .not('category', 'is', null)
     if (!data) return []
     return [...new Set(data.map((p) => p.category as string))].filter(Boolean).sort()
-  } catch {
-    return []
-  }
+  } catch { return [] }
 }
 
 export default async function TiendaPage({
@@ -53,12 +47,13 @@ export default async function TiendaPage({
 
   return (
     <>
+      <InteractiveBackground />
       <Navbar />
-      <StoreView 
-        products={products} 
-        categories={categories} 
-        initialCategoria={categoria} 
-        initialQ={q} 
+      <StoreView
+        products={products}
+        categories={categories}
+        initialCategoria={categoria}
+        initialQ={q}
       />
     </>
   )
