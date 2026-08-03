@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createPreference } from '@/lib/mercadopago'
 import { getAdminClient } from '@/lib/supabase'
-import { sendAdminNewOrder, sendBuyerConfirmation } from '@/lib/email'
 import { CartItem, OrderAddress } from '@/lib/types'
 
 export async function POST(req: Request) {
@@ -45,26 +44,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: orderError.message }, { status: 500 })
     }
 
-    const preference = await createPreference(items, order.id, email)
+    const preference = await createPreference(items, order.id, email, ship)
 
     await db
       .from('orders')
       .update({ mp_preference_id: preference.id })
       .eq('id', order.id)
-
-    // Enviar emails en background (no bloqueamos la respuesta)
-    if (address) {
-      Promise.all([
-        sendAdminNewOrder(order.id, items, total, ship, address, email ?? null).catch(
-          (e) => console.error('Admin email error:', e),
-        ),
-        email
-          ? sendBuyerConfirmation(order.id, items, total, ship, address, email).catch(
-              (e) => console.error('Buyer email error:', e),
-            )
-          : Promise.resolve(),
-      ])
-    }
 
     return NextResponse.json({ init_point: preference.init_point })
   } catch (e: unknown) {
