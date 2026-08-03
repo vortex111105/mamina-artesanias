@@ -2,91 +2,186 @@
 
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { Download } from 'lucide-react'
 
-export default function QRPage() {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const [url, setUrl] = useState('')
-  const [generated, setGenerated] = useState(false)
+const SITE_URL = 'https://mamina.store'
 
-  const appUrl =
-    typeof window !== 'undefined'
-      ? window.location.origin
-      : process.env.NEXT_PUBLIC_APP_URL || ''
-
+function useQR(ref: React.RefObject<HTMLCanvasElement | null>, size: number) {
   useEffect(() => {
-    setUrl(appUrl)
-  }, [appUrl])
-
-  async function generateQR() {
-    if (!canvasRef.current || !url) return
-    await QRCode.toCanvas(canvasRef.current, url, {
-      width: 400,
-      margin: 3,
-      color: { dark: '#5C3D2E', light: '#FFF8F0' },
+    if (!ref.current) return
+    QRCode.toCanvas(ref.current, SITE_URL, {
+      width: size,
+      margin: 1,
+      color: { dark: '#4D3F4D', light: '#FFFFFF' },
     })
-    setGenerated(true)
-  }
+  }, [ref, size])
+}
 
-  function downloadQR() {
-    if (!canvasRef.current) return
-    const link = document.createElement('a')
-    link.download = 'mamina-qr.png'
-    link.href = canvasRef.current.toDataURL('image/png')
-    link.click()
-  }
+/* ── Tarjeta grande (cartel de feria) ─────────────────────── */
+function CartelFeria() {
+  const qrRef = useRef<HTMLCanvasElement>(null)
+  useQR(qrRef, 260)
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-6 py-12 bg-cream">
-      <div className="w-full max-w-sm flex flex-col items-center gap-6">
-        <h1 className="font-display text-3xl font-bold text-brown text-center">
-          Generador de QR
+    <div
+      id="mamina-card"
+      className="bg-white rounded-3xl shadow-warm-lg border border-sand/50 flex flex-col items-center gap-7 px-12 py-10"
+      style={{ width: 360 }}
+    >
+      <div className="text-center">
+        <p className="text-terracotta text-3xl mb-2">✦</p>
+        <h1 className="font-display font-bold text-brown tracking-tight" style={{ fontSize: 52, lineHeight: 1 }}>
+          MAMINA
         </h1>
-        <p className="text-brown-light text-sm text-center">
-          Este QR lleva a la landing de MAMINA Artesanías
-        </p>
-
-        <div className="bg-white rounded-2xl p-6 border border-sand shadow-sm flex flex-col items-center gap-4 w-full">
-          <input
-            type="text"
-            value={url}
-            onChange={(e) => { setUrl(e.target.value); setGenerated(false) }}
-            className="w-full rounded-xl border border-sand px-4 py-2.5 text-sm text-brown focus:outline-none focus:border-terracotta"
-            placeholder="URL de la web"
-          />
-
-          <canvas ref={canvasRef} className={generated ? 'rounded-xl' : 'hidden'} />
-
-          {!generated && (
-            <div className="w-48 h-48 bg-sand/40 rounded-xl flex items-center justify-center text-brown-light/40 text-4xl">
-              📱
-            </div>
-          )}
-
-          <div className="flex flex-col gap-2 w-full">
-            <button
-              onClick={generateQR}
-              className="w-full py-3 bg-terracotta text-white font-semibold rounded-2xl hover:bg-terracotta-dark transition-colors"
-            >
-              Generar QR
-            </button>
-
-            {generated && (
-              <button
-                onClick={downloadQR}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-brown text-white font-semibold rounded-2xl hover:bg-brown/90 transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                Descargar PNG
-              </button>
-            )}
-          </div>
-        </div>
-
-        <p className="text-brown-light/50 text-xs text-center">
-          Imprimí el QR y colocalo en la tienda para que los clientes lo escaneen
+        <p className="text-brown-light text-[13px] mt-3 font-light tracking-wide">
+          Cerámica artesanal hecha con amor
         </p>
       </div>
-    </main>
+      <div className="flex items-center gap-3 w-full">
+        <div className="flex-1 h-px bg-sand" />
+        <span className="text-sand text-xs">✦</span>
+        <div className="flex-1 h-px bg-sand" />
+      </div>
+      <div className="rounded-2xl overflow-hidden border border-sand/60 p-2.5 bg-white">
+        <canvas ref={qrRef} />
+      </div>
+      <div className="text-center">
+        <p className="text-brown-light text-[11px] tracking-widest uppercase mb-1">
+          Escaneá para ver el catálogo
+        </p>
+        <p className="font-display font-bold text-terracotta text-base tracking-wide">
+          mamina.store
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ── Tarjeta chica individual (para repartir) ──────────────── */
+function MiniCard({ qrRef }: { qrRef: React.RefObject<HTMLCanvasElement | null> }) {
+  return (
+    <div
+      className="bg-white flex flex-col items-center justify-between py-3 px-4"
+      style={{ width: '9cm', height: '5.5cm', border: '0.5px dashed #C8A09A', boxSizing: 'border-box' }}
+    >
+      <div className="text-center leading-none">
+        <span className="text-terracotta" style={{ fontSize: 10 }}>✦</span>
+        <h2 className="font-display font-bold text-brown" style={{ fontSize: 22, lineHeight: 1.1 }}>
+          MAMINA
+        </h2>
+        <p className="text-brown-light font-light" style={{ fontSize: 8, marginTop: 2, letterSpacing: '0.05em' }}>
+          Cerámica artesanal hecha con amor
+        </p>
+      </div>
+      <div className="rounded-lg overflow-hidden border border-sand/60" style={{ padding: 3 }}>
+        <canvas ref={qrRef} />
+      </div>
+      <div className="text-center">
+        <p className="text-brown-light" style={{ fontSize: 7, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 1 }}>
+          Escaneá para ver el catálogo
+        </p>
+        <p className="font-display font-bold text-terracotta" style={{ fontSize: 10, letterSpacing: '0.05em' }}>
+          mamina.store
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ── Hoja con 8 tarjetas ───────────────────────────────────── */
+function TarjetasRepartir() {
+  const refs = Array.from({ length: 8 }, () => useRef<HTMLCanvasElement>(null))
+
+  useEffect(() => {
+    refs.forEach((ref) => {
+      if (!ref.current) return
+      QRCode.toCanvas(ref.current, SITE_URL, {
+        width: 90,
+        margin: 1,
+        color: { dark: '#4D3F4D', light: '#FFFFFF' },
+      })
+    })
+  })
+
+  return (
+    <div
+      id="mamina-card"
+      className="bg-white"
+      style={{
+        width: '21cm',
+        minHeight: '29.7cm',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        alignContent: 'start',
+        padding: '1cm',
+        gap: 0,
+        boxSizing: 'border-box',
+      }}
+    >
+      {refs.map((ref, i) => (
+        <MiniCard key={i} qrRef={ref} />
+      ))}
+    </div>
+  )
+}
+
+/* ── Página principal ─────────────────────────────────────── */
+export default function QRPage() {
+  const [modo, setModo] = useState<'cartel' | 'tarjetas'>('cartel')
+
+  return (
+    <>
+      <style>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { background: white; margin: 0; }
+          main { display: flex; justify-content: center; align-items: flex-start; padding: 0 !important; background: white !important; min-height: auto !important; }
+          #mamina-card { box-shadow: none !important; border-radius: 0 !important; }
+        }
+      `}</style>
+
+      <main className="min-h-screen bg-cream flex flex-col items-center justify-center p-8 gap-6">
+
+        {/* Selector de modo */}
+        <div className="no-print flex rounded-2xl border border-sand bg-white overflow-hidden shadow-sm">
+          <button
+            onClick={() => setModo('cartel')}
+            className={`px-6 py-3 text-sm font-semibold transition-colors ${
+              modo === 'cartel'
+                ? 'bg-brown text-white'
+                : 'text-brown-light hover:text-brown'
+            }`}
+          >
+            🖼️ Cartel de feria
+          </button>
+          <button
+            onClick={() => setModo('tarjetas')}
+            className={`px-6 py-3 text-sm font-semibold transition-colors ${
+              modo === 'tarjetas'
+                ? 'bg-brown text-white'
+                : 'text-brown-light hover:text-brown'
+            }`}
+          >
+            🃏 Tarjetas para repartir
+          </button>
+        </div>
+
+        <p className="no-print text-brown-light text-xs text-center">
+          {modo === 'cartel'
+            ? 'Una tarjeta grande para dejar fija en la mesa'
+            : '8 tarjetas por hoja A4 — imprimí, recortá y repartí'}
+        </p>
+
+        {/* Contenido según modo */}
+        {modo === 'cartel' ? <CartelFeria /> : <TarjetasRepartir />}
+
+        {/* Botón imprimir */}
+        <button
+          onClick={() => window.print()}
+          className="no-print flex items-center gap-2 px-8 py-4 bg-brown text-white font-semibold rounded-2xl hover:bg-brown/90 transition-colors shadow-sm text-sm"
+        >
+          🖨️&nbsp; Imprimir
+        </button>
+      </main>
+    </>
   )
 }

@@ -53,7 +53,7 @@ export function ProductCard({ product }: { product: Product }) {
         className="h-full"
       >
         <Link href={`/tienda/${product.id}`} className="group block h-full">
-          <div className="h-full rounded-[2rem] overflow-hidden bg-white shadow-[0_8px_30px_rgb(196,113,75,0.12)] border border-terracotta/30 hover:border-terracotta/60 hover:shadow-[0_8px_30px_rgb(196,113,75,0.2)] transition-all duration-300">
+          <div className="h-full rounded-[2rem] overflow-hidden bg-white shadow-[0_8px_30px_rgb(200,160,154,0.12)] border border-terracotta/30 hover:border-terracotta/60 hover:shadow-[0_8px_30px_rgb(200,160,154,0.22)] transition-all duration-300">
             <div className="relative aspect-[4/5] bg-sand/40 overflow-hidden rounded-t-[2rem]">
               {product.image_url && !imgError ? (
                 <Image

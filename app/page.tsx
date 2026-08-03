@@ -6,7 +6,7 @@ import { ShoppingBag, CreditCard, Sparkles, Heart, Star, Palette, Coffee } from 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 
 const MP_LINK = process.env.NEXT_PUBLIC_MP_LINK || 'https://link.mercadopago.com.ar/mamiina'
-const IG_LINK = process.env.NEXT_PUBLIC_IG_LINK || 'https://instagram.com/mamina.artesanias'
+const IG_LINK = process.env.NEXT_PUBLIC_IG_LINK || '#'
 
 function InstagramIcon({ className }: { className?: string }) {
   return (
@@ -17,7 +17,6 @@ function InstagramIcon({ className }: { className?: string }) {
     </svg>
   )
 }
-
 
 export default function LandingPage() {
   const x = useMotionValue(0)
@@ -82,7 +81,7 @@ export default function LandingPage() {
             <div className="flex flex-col gap-4 w-full">
               <Link
                 href="/tienda"
-                className="flex items-center gap-4 w-full rounded-2xl px-6 py-5 bg-terracotta text-white shadow-[0_0_30px_rgba(196,113,75,0.3)] hover:shadow-[0_0_40px_rgba(196,113,75,0.5)] hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+                className="flex items-center gap-4 w-full rounded-2xl px-6 py-5 bg-terracotta text-white shadow-[0_0_30px_rgba(200,160,154,0.35)] hover:shadow-[0_0_40px_rgba(200,160,154,0.55)] hover:-translate-y-0.5 active:scale-[0.98] transition-all"
               >
                 <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
                   <ShoppingBag className="w-6 h-6" />
