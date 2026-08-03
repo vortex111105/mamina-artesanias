@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
 import { getPayment } from '@/lib/mercadopago'
 import { notifyAdmin } from '@/lib/telegram'
+import { sendBuyerConfirmation } from '@/lib/email'
 
 export async function POST(req: Request) {
   try {
@@ -73,6 +74,17 @@ export async function POST(req: Request) {
     await notifyAdmin(
       `✅ <b>Pago confirmado por MP!</b>\n\n${itemLines}${addressLine}\n\n💰 <b>Total: $${order.total.toLocaleString('es-AR')}</b>\n📧 ${order.customer_email ?? 'sin email'}\n🆔 Orden #${order.id}`,
     )
+
+    if (order.customer_email && order.address) {
+      sendBuyerConfirmation(
+        order.id,
+        order.items,
+        order.total,
+        order.shipping_cost ?? 0,
+        order.address,
+        order.customer_email,
+      ).catch((e) => console.error('Buyer email error:', e))
+    }
 
     return NextResponse.json({ ok: true })
   } catch (e: unknown) {
