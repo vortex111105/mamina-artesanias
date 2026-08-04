@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
 import { getPayment } from '@/lib/mercadopago'
 import { notifyAdmin } from '@/lib/telegram'
-import { sendBuyerConfirmation } from '@/lib/email'
+import { sendBuyerConfirmation, sendAdminNewOrder } from '@/lib/email'
 
 export async function POST(req: Request) {
   try {
@@ -59,6 +59,21 @@ export async function POST(req: Request) {
       .update({ status: 'paid', mp_payment_id: String(data.id) })
       .eq('id', Number(orderId))
 
+    // Descontar stock de cada producto vendido
+    for (const item of order.items as Array<{ product: { id: number }; quantity: number }>) {
+      const { data: prod } = await db
+        .from('products')
+        .select('stock')
+        .eq('id', item.product.id)
+        .single()
+      if (prod) {
+        await db
+          .from('products')
+          .update({ stock: Math.max(0, prod.stock - item.quantity) })
+          .eq('id', item.product.id)
+      }
+    }
+
     const itemLines = order.items
       .map(
         (i: { product: { name: string; price: number }; quantity: number }) =>
@@ -74,6 +89,17 @@ export async function POST(req: Request) {
     await notifyAdmin(
       `✅ <b>Pago confirmado por MP!</b>\n\n${itemLines}${addressLine}\n\n💰 <b>Total: $${order.total.toLocaleString('es-AR')}</b>\n📧 ${order.customer_email ?? 'sin email'}\n🆔 Orden #${order.id}`,
     )
+
+    if (order.address) {
+      sendAdminNewOrder(
+        order.id,
+        order.items,
+        order.total,
+        order.shipping_cost ?? 0,
+        order.address,
+        order.customer_email,
+      ).catch((e) => console.error('Admin email error:', e))
+    }
 
     if (order.customer_email && order.address) {
       sendBuyerConfirmation(
