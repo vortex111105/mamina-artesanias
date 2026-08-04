@@ -46,6 +46,7 @@ export async function createPreference(
         pending: `${appUrl}/gracias?order_id=${orderId}&pending=true`,
       },
       auto_return: 'approved',
+      notification_url: `${appUrl}/api/mercadopago/webhook`,
       external_reference: String(orderId),
     },
   })
